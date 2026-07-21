@@ -5,6 +5,8 @@ import { config } from './config/env.js';
 import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
 import meRouter from './routes/me.js';
+import boardsRouter from './routes/boards.js';
+import listsRouter from './routes/lists.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 // The Express app with no server.listen — so tests can import it directly
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/me', meRouter);
+app.use('/api/boards', boardsRouter);
+app.use('/api/lists', listsRouter);
 
 app.use(notFound);
 app.use(errorHandler);
