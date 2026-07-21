@@ -39,9 +39,10 @@ login/refresh, `authRequired` middleware, `/api/me`, central error handler; 13 t
   token; `POST /api/auth/refresh`; central error-handling middleware. A `/api/me` route
   proves the whole chain.
 
-## Phase 2 — Boards, Lists, Cards (CRUD)  — ~2–3 days
+## Phase 2 — Boards, Lists, Cards (CRUD) ✅  — ~2–3 days
 
-The core data, all scoped to the logged-in user.
+The core data, all scoped to the logged-in user. **Done** — boards/lists/cards CRUD, ownership
+isolation, cascade deletes, and card move/reorder; 30 tests passing.
 
 - **Day 4 — Boards + Lists.** Models + REST routes; every query filtered by `owner`.
 - **Day 5 — Cards.** Card model + routes; `position` field for ordering within a list.
