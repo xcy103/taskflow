@@ -62,7 +62,10 @@ card CRUD, drag-and-drop reorder/move (@dnd-kit), and polish (spinner/error/empt
   move between lists (`@dnd-kit`). **Learn:** drag-and-drop + optimistic UI.
 - **Day 10 — Polish.** Loading/empty/error states, responsive layout, small niceties.
 
-## Phase 4 — Testing  — ~2 days
+## Phase 4 — Testing ✅  — ~2 days
+
+**Done** — backend: 36 Jest/Supertest tests + enforced coverage floor; frontend: 6
+Vitest/RTL tests (login form, board rendering, card interaction) with the API mocked.
 
 - **Day 11 — Backend tests.** Jest + Supertest + `mongodb-memory-server`: auth flow,
   and CRUD with the auth-failure cases (can't touch another user's board). Add coverage.
