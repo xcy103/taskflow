@@ -23,9 +23,10 @@ This file is a guide, not a contract — update it as things change.
 Repo skeleton, `CLAUDE.md` (scope), this roadmap, and config files: `.gitignore`,
 `.env.example`, `docker-compose.yml`, CI workflow stub. No app code yet.
 
-## Phase 1 — Backend + Auth (JWT)  — ~3 days
+## Phase 1 — Backend + Auth (JWT) ✅  — ~3 days
 
-The backbone. A running Express API talking to MongoDB, with real auth.
+The backbone. A running Express API talking to MongoDB, with real auth. **Done** — register/
+login/refresh, `authRequired` middleware, `/api/me`, central error handler; 13 tests passing.
 
 - **Day 1 — API skeleton + DB.** `npm init` in `server/`; Express app split into
   `app.js` (no listen, testable) + `server.js`; Mongoose connection to Dockerized Mongo;
