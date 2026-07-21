@@ -62,3 +62,52 @@ export async function deleteCard(req, res) {
   await card.deleteOne();
   res.status(204).send();
 }
+
+// Rewrite an ordered array of cards to positions 0..n-1 (persisting list changes too).
+async function reindex(orderedCards) {
+  for (let i = 0; i < orderedCards.length; i++) {
+    orderedCards[i].position = i;
+    await orderedCards[i].save();
+  }
+}
+
+// Move a card within its list or to another list on the same board, at a given index.
+// Body: { listId, position }. We rebuild the affected lists' ordering rather than
+// nudging individual positions — simpler and avoids off-by-one bugs.
+export async function moveCard(req, res) {
+  const { listId } = req.body || {};
+  if (!listId) throw httpError(400, 'listId is required');
+
+  const card = await getOwnedCard(req.params.id, req.userId);
+  const targetList = await getOwnedList(listId, req.userId);
+
+  if (String(targetList.board) !== String(card.board)) {
+    throw httpError(400, 'cannot move a card to a different board');
+  }
+
+  const rawPos = req.body.position;
+  const desiredPos = Number.isInteger(rawPos) ? rawPos : Number.MAX_SAFE_INTEGER;
+  const sameList = String(card.list) === String(listId);
+
+  if (sameList) {
+    const cards = await Card.find({ list: listId }).sort({ position: 1 });
+    const others = cards.filter((c) => String(c._id) !== String(card._id));
+    others.splice(Math.max(0, Math.min(desiredPos, others.length)), 0, card);
+    await reindex(others);
+  } else {
+    // Close the gap in the source list.
+    const sourceCards = (await Card.find({ list: card.list }).sort({ position: 1 })).filter(
+      (c) => String(c._id) !== String(card._id)
+    );
+    await reindex(sourceCards);
+
+    // Insert into the target list.
+    card.list = listId;
+    const targetCards = await Card.find({ list: listId }).sort({ position: 1 });
+    targetCards.splice(Math.max(0, Math.min(desiredPos, targetCards.length)), 0, card);
+    await reindex(targetCards);
+  }
+
+  const updated = await Card.findById(card._id);
+  res.json({ card: updated });
+}

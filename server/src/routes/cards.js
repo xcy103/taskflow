@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authRequired } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { getCard, updateCard, deleteCard } from '../controllers/cardController.js';
+import { getCard, updateCard, deleteCard, moveCard } from '../controllers/cardController.js';
 
 const router = Router();
 
@@ -9,6 +9,7 @@ router.use(authRequired);
 
 router.get('/:id', asyncHandler(getCard));
 router.patch('/:id', asyncHandler(updateCard));
+router.patch('/:id/move', asyncHandler(moveCard));
 router.delete('/:id', asyncHandler(deleteCard));
 
 export default router;
