@@ -1,26 +1,102 @@
-import { useAuth } from '../context/AuthContext';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { api } from '../api/client';
+import { Header } from '../components/Header';
 
-// Placeholder home for authenticated users. The real boards UI (list boards,
-// create, open) arrives in Phase 3 Day 8.
 export function BoardsPage() {
-  const { user, logout } = useAuth();
+  const [boards, setBoards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [title, setTitle] = useState('');
+  const [creating, setCreating] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { boards: data } = await api.get('/boards');
+        setBoards(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  async function createBoard(e) {
+    e.preventDefault();
+    if (!title.trim()) return;
+    setCreating(true);
+    setError('');
+    try {
+      const { board } = await api.post('/boards', { title });
+      setBoards((prev) => [board, ...prev]);
+      setTitle('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setCreating(false);
+    }
+  }
+
+  async function deleteBoard(id) {
+    try {
+      await api.delete(`/boards/${id}`);
+      setBoards((prev) => prev.filter((b) => b._id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   return (
     <div className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-        <h1 className="text-lg font-semibold">TaskFlow</h1>
-        <div className="flex items-center gap-4 text-sm">
-          <span className="text-slate-500">{user?.name}</span>
-          <button onClick={logout} className="text-indigo-600 hover:underline">
-            Log out
-          </button>
-        </div>
-      </header>
+      <Header />
+      <main className="mx-auto max-w-5xl p-6">
+        <h2 className="mb-4 text-xl font-semibold">Your boards</h2>
 
-      <main className="p-6">
-        <p className="text-slate-600">
-          Welcome, <strong>{user?.name}</strong>. Your boards will appear here (Day 8).
-        </p>
+        <form onSubmit={createBoard} className="mb-6 flex gap-2">
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="New board title"
+            className="flex-1 rounded-md border border-slate-300 px-3 py-2 focus:border-indigo-500 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={creating}
+            className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            Add board
+          </button>
+        </form>
+
+        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+
+        {loading ? (
+          <p className="text-slate-500">Loading…</p>
+        ) : boards.length === 0 ? (
+          <p className="text-slate-500">No boards yet — create your first one above.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {boards.map((b) => (
+              <div
+                key={b._id}
+                className="group flex items-center justify-between rounded-lg bg-white p-5 shadow-sm hover:shadow"
+              >
+                <Link to={`/boards/${b._id}`} className="font-medium hover:text-indigo-600">
+                  {b.title}
+                </Link>
+                <button
+                  onClick={() => deleteBoard(b._id)}
+                  className="text-xs text-slate-400 opacity-0 hover:text-red-600 group-hover:opacity-100"
+                  aria-label={`Delete ${b.title}`}
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
