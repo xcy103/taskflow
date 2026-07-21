@@ -12,6 +12,8 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { api } from '../api/client';
 import { Header } from '../components/Header';
 import { Column } from '../components/board/Column';
+import { Spinner } from '../components/ui/Spinner';
+import { ErrorBanner } from '../components/ui/ErrorBanner';
 
 export function BoardPage() {
   const { id } = useParams();
@@ -175,7 +177,9 @@ export function BoardPage() {
     return (
       <div className="min-h-screen">
         <Header />
-        <p className="p-6 text-slate-500">Loading…</p>
+        <div className="p-6">
+          <Spinner />
+        </div>
       </div>
     );
   }
@@ -205,7 +209,13 @@ export function BoardPage() {
           <h2 className="text-xl font-semibold">{board?.title}</h2>
         </div>
 
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        <ErrorBanner message={error} onDismiss={() => setError('')} />
+
+        {lists.length === 0 && (
+          <p className="mb-4 text-sm text-slate-500">
+            This board is empty — add your first list to get started.
+          </p>
+        )}
 
         <DndContext
           sensors={sensors}

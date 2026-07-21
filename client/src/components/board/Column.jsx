@@ -18,10 +18,15 @@ export function Column({ list, onAddCard, onEditCard, onDeleteCard }) {
 
   return (
     <section className="w-72 shrink-0 rounded-lg bg-slate-200/70 p-3">
-      <h3 className="mb-2 px-1 font-medium">{list.title}</h3>
+      <h3 className="mb-2 flex items-center justify-between px-1 font-medium">
+        <span>{list.title}</span>
+        <span className="rounded-full bg-slate-300/60 px-2 text-xs font-normal text-slate-600">
+          {list.cards.length}
+        </span>
+      </h3>
 
       <SortableContext items={list.cards.map((c) => c._id)} strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef} className="min-h-[12px] space-y-2">
+        <div ref={setNodeRef} className="min-h-3 space-y-2">
           {list.cards.map((card) => (
             <SortableCard key={card._id} card={card} onEdit={onEditCard} onDelete={onDeleteCard} />
           ))}

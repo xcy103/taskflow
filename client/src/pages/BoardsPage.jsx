@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { Header } from '../components/Header';
+import { Spinner } from '../components/ui/Spinner';
+import { ErrorBanner } from '../components/ui/ErrorBanner';
 
 export function BoardsPage() {
   const [boards, setBoards] = useState([]);
@@ -39,7 +41,8 @@ export function BoardsPage() {
     }
   }
 
-  async function deleteBoard(id) {
+  async function deleteBoard(id, title) {
+    if (!window.confirm(`Delete "${title}" and all its lists and cards?`)) return;
     try {
       await api.delete(`/boards/${id}`);
       setBoards((prev) => prev.filter((b) => b._id !== id));
@@ -70,10 +73,10 @@ export function BoardsPage() {
           </button>
         </form>
 
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        <ErrorBanner message={error} onDismiss={() => setError('')} />
 
         {loading ? (
-          <p className="text-slate-500">Loading…</p>
+          <Spinner />
         ) : boards.length === 0 ? (
           <p className="text-slate-500">No boards yet — create your first one above.</p>
         ) : (
@@ -87,7 +90,7 @@ export function BoardsPage() {
                   {b.title}
                 </Link>
                 <button
-                  onClick={() => deleteBoard(b._id)}
+                  onClick={() => deleteBoard(b._id, b.title)}
                   className="text-xs text-slate-400 opacity-0 hover:text-red-600 group-hover:opacity-100"
                   aria-label={`Delete ${b.title}`}
                 >
