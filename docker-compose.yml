@@ -1,7 +1,6 @@
 # Local dev stack: MongoDB + API + client.
-# Usage: cp .env.example .env  &&  docker compose up
-# (Dockerfiles are added in Phase 5; until then, `mongo` alone is useful:
-#  docker compose up mongo)
+# Usage: cp .env.example .env  &&  docker compose up --build
+#   client → http://localhost:5173   api → http://localhost:5001
 
 services:
   mongo:
@@ -14,23 +13,28 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   api:
     build: ./server
     restart: unless-stopped
     env_file: .env
-    environment:
-      MONGODB_URI: ${MONGODB_URI}
     ports:
       - "5001:5001"
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy # wait until Mongo can accept connections
 
   client:
-    build: ./client
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: ${VITE_API_URL}
     restart: unless-stopped
-    environment:
-      VITE_API_URL: ${VITE_API_URL}
     ports:
       - "5173:80"
     depends_on:
