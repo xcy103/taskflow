@@ -49,7 +49,10 @@ isolation, cascade deletes, and card move/reorder; 30 tests passing.
 - **Day 6 — Move/reorder.** Endpoint to move a card between lists / reorder (update
   positions). Keep the ordering logic simple and documented.
 
-## Phase 3 — Frontend (React)  — ~3–4 days
+## Phase 3 — Frontend (React) ✅  — ~3–4 days
+
+**Done** — auth (login/register, session restore), boards list, board view with lists/cards,
+card CRUD, drag-and-drop reorder/move (@dnd-kit), and polish (spinner/error/empty states).
 
 - **Day 7 — Vite + Tailwind + routing.** Scaffold `client/`; login & register pages;
   auth context storing the access token; a fetch wrapper that attaches the Bearer token
