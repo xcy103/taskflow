@@ -41,12 +41,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: client/package-lock.json
-      - run: npm ci
-      - run: npm run lint --if-present
-      - run: npm test --if-present
-      - run: npm run build
+      # client/ is scaffolded in Phase 3 — skip cleanly until it has a package.json.
+      - name: Install, lint, test, build
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+            npm run lint --if-present
+            npm test --if-present
+            npm run build
+          else
+            echo "client/ not scaffolded yet — skipping"
+          fi
 
   docker:
     name: Docker build (smoke)
