@@ -1,18 +1,11 @@
-import { Board } from '../models/Board.js';
 import { List } from '../models/List.js';
+import { Card } from '../models/Card.js';
+import { getOwnedBoard, getOwnedList } from '../services/ownership.js';
 import { httpError } from '../utils/httpError.js';
-
-// Lists live under a board; ownership is enforced via the parent board.
-// Returns the board if the user owns it, else throws 404 (don't reveal existence).
-async function assertBoardOwned(boardId, userId) {
-  const board = await Board.findOne({ _id: boardId, owner: userId });
-  if (!board) throw httpError(404, 'board not found');
-  return board;
-}
 
 export async function createList(req, res) {
   const { boardId } = req.params;
-  await assertBoardOwned(boardId, req.userId);
+  await getOwnedBoard(boardId, req.userId);
 
   const { title } = req.body || {};
   if (!title?.trim()) throw httpError(400, 'title is required');
@@ -25,16 +18,14 @@ export async function createList(req, res) {
 
 export async function listLists(req, res) {
   const { boardId } = req.params;
-  await assertBoardOwned(boardId, req.userId);
+  await getOwnedBoard(boardId, req.userId);
 
   const lists = await List.find({ board: boardId }).sort({ position: 1 });
   res.json({ lists });
 }
 
 export async function updateList(req, res) {
-  const list = await List.findById(req.params.id);
-  if (!list) throw httpError(404, 'list not found');
-  await assertBoardOwned(list.board, req.userId);
+  const list = await getOwnedList(req.params.id, req.userId);
 
   const { title, position } = req.body || {};
   if (title !== undefined) {
@@ -48,10 +39,9 @@ export async function updateList(req, res) {
 }
 
 export async function deleteList(req, res) {
-  const list = await List.findById(req.params.id);
-  if (!list) throw httpError(404, 'list not found');
-  await assertBoardOwned(list.board, req.userId);
+  const list = await getOwnedList(req.params.id, req.userId);
 
   await list.deleteOne();
+  await Card.deleteMany({ list: list._id }); // cascade: drop the list's cards
   res.status(204).send();
 }

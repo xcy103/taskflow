@@ -7,6 +7,7 @@ import authRouter from './routes/auth.js';
 import meRouter from './routes/me.js';
 import boardsRouter from './routes/boards.js';
 import listsRouter from './routes/lists.js';
+import cardsRouter from './routes/cards.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 // The Express app with no server.listen — so tests can import it directly
@@ -22,6 +23,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/me', meRouter);
 app.use('/api/boards', boardsRouter);
 app.use('/api/lists', listsRouter);
+app.use('/api/cards', cardsRouter);
 
 app.use(notFound);
 app.use(errorHandler);

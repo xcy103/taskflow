@@ -1,5 +1,6 @@
 import { Board } from '../models/Board.js';
 import { List } from '../models/List.js';
+import { Card } from '../models/Card.js';
 import { httpError } from '../utils/httpError.js';
 
 // All queries are scoped by owner === req.userId, so a user only ever sees
@@ -41,7 +42,8 @@ export async function deleteBoard(req, res) {
   const board = await Board.findOneAndDelete({ _id: req.params.id, owner: req.userId });
   if (!board) throw httpError(404, 'board not found');
 
-  // Cascade: remove the board's lists (cards are handled in Day 5).
+  // Cascade: remove the board's lists and cards.
   await List.deleteMany({ board: board._id });
+  await Card.deleteMany({ board: board._id });
   res.status(204).send();
 }
