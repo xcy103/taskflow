@@ -1,5 +1,7 @@
 # TaskFlow
 
+[![CI](https://github.com/xcy103/taskflow/actions/workflows/ci.yml/badge.svg)](https://github.com/xcy103/taskflow/actions/workflows/ci.yml)
+
 A small full-stack **Kanban board** (MERN). A practice project built to demonstrate:
 MERN stack · JWT auth · testing · Docker · CI/CD · Azure.
 

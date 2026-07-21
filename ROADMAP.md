@@ -72,7 +72,10 @@ Vitest/RTL tests (login form, board rendering, card interaction) with the API mo
 - **Day 12 — Frontend tests.** Vitest + React Testing Library: login form, board rendering,
   a card interaction. Mock the API layer.
 
-## Phase 5 — Docker + CI/CD  — ~2 days
+## Phase 5 — Docker + CI/CD ✅  — ~2 days
+
+**Done** — multi-stage Dockerfiles + `docker compose up` runs the whole stack; GitHub Actions
+runs lint, backend coverage, frontend tests, and builds both images on every push (green).
 
 - **Day 13 — Dockerize.** `Dockerfile` for `server/` (multi-stage) and `client/` (build →
   static); finalize `docker-compose.yml` (api + client + mongo). `docker compose up` runs
