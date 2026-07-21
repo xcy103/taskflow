@@ -19,7 +19,7 @@ cp .env.example .env          # then edit secrets
 docker compose up mongo       # start MongoDB (until services are dockerized)
 
 # once server/ and client/ are scaffolded (Phase 1+):
-cd server && npm install && npm run dev   # API  → http://localhost:5000
+cd server && npm install && npm run dev   # API  → http://localhost:5001
 cd client && npm install && npm run dev   # app  → http://localhost:5173
 
 # full stack in Docker (Phase 5+):

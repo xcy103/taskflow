@@ -22,7 +22,7 @@ services:
     environment:
       MONGODB_URI: ${MONGODB_URI}
     ports:
-      - "5000:5000"
+      - "5001:5001"
     depends_on:
       - mongo
 

@@ -90,7 +90,7 @@ never read or mutate another user's data — enforce this in every controller, n
 ```
 docker compose up          # everything (api + client + mongo) locally
 # or, per service:
-cd server && npm run dev    # API on :5000
+cd server && npm run dev    # API on :5001
 cd client && npm run dev    # client on :5173
 ```
 
