@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { User } from '../models/User.js';
-import { signAccessToken, signRefreshToken } from '../utils/tokens.js';
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/tokens.js';
 import { config } from '../config/env.js';
 
 const REFRESH_COOKIE = 'refreshToken';
@@ -59,6 +59,29 @@ export async function login(req, res) {
   // don't reveal which accounts exist.
   if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
     return res.status(401).json({ error: 'invalid credentials' });
+  }
+
+  const accessToken = issueTokens(res, user);
+  return res.json({ user, accessToken });
+}
+
+// Exchange the refresh cookie for a fresh access token (and a rotated refresh cookie).
+export async function refresh(req, res) {
+  const token = req.cookies?.refreshToken;
+  if (!token) {
+    return res.status(401).json({ error: 'no refresh token' });
+  }
+
+  let payload;
+  try {
+    payload = verifyRefreshToken(token);
+  } catch {
+    return res.status(401).json({ error: 'invalid or expired refresh token' });
+  }
+
+  const user = await User.findById(payload.sub);
+  if (!user) {
+    return res.status(401).json({ error: 'user no longer exists' });
   }
 
   const accessToken = issueTokens(res, user);
