@@ -8,19 +8,21 @@ const cardSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'List',
       required: true,
-      index: true,
     },
     // Denormalized parent board — makes cascade-delete and board-wide queries cheap.
     board: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Board',
       required: true,
-      index: true,
+      index: true, // used by cascade delete (deleteMany by board)
     },
     position: { type: Number, required: true }, // order within its list
     dueDate: { type: Date },
   },
   { timestamps: true }
 );
+
+// Matches listCards: filter by list, sort by position (Cosmos needs the sort indexed).
+cardSchema.index({ list: 1, position: 1 });
 
 export const Card = mongoose.model('Card', cardSchema);

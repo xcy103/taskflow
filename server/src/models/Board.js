@@ -7,10 +7,13 @@ const boardSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
-      index: true, // every board query is scoped by owner
     },
   },
   { timestamps: true }
 );
+
+// Matches listBoards: filter by owner, sort by createdAt. Cosmos requires the
+// sort field to be indexed, so this must cover the sort too (not just owner).
+boardSchema.index({ owner: 1, createdAt: -1 });
 
 export const Board = mongoose.model('Board', boardSchema);
