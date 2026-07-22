@@ -84,7 +84,11 @@ runs lint, backend coverage, frontend tests, and builds both images on every pus
   build Docker image. Branch protection so the pipeline must pass. **Learn:** Actions
   workflow syntax, caching, matrix.
 
-## Phase 6 — Azure deployment  — ~2–3 days
+## Phase 6 — Azure deployment ✅  — ~2–3 days
+
+**Done & live** — React on Static Web Apps, API on Container Apps (image in ACR), data in
+Cosmos DB (serverless). Both frontend and API auto-deploy via GitHub Actions. CORS wired to
+the live origin. Live: https://mango-mud-0d7386d0f.7.azurestaticapps.net
 
 Bring it to the cloud. This is the "cloud platform" resume line.
 

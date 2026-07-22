@@ -43,3 +43,24 @@ client/   React app (Vite)
 ```
 
 Generate JWT secrets with `openssl rand -hex 32`.
+
+## Deployment (Azure)
+
+```
+Browser ──▶ Static Web Apps (React)  ──▶  Container Apps (Express API)  ──▶  Cosmos DB (Mongo)
+             mango-mud-…azurestaticapps.net   taskflow-api.…azurecontainerapps.io   serverless
+```
+
+- **Frontend** → Azure **Static Web Apps** (Free). Auto-deploys via
+  [`deploy-web.yml`](.github/workflows/deploy-web.yml); the API URL is baked in at build time.
+- **API** → Azure **Container Apps** (scales to zero). Image built and pushed to **ACR**, then
+  rolled out by [`deploy-api.yml`](.github/workflows/deploy-api.yml) on every push to `server/**`.
+- **Database** → Azure **Cosmos DB for MongoDB** (serverless).
+- Secrets (Mongo URI, JWT keys) are Container App secrets; GitHub Actions auth uses a
+  resource-group–scoped service principal (`AZURE_CREDENTIALS`).
+
+**Tear down all Azure resources** when finished:
+
+```bash
+az group delete -n taskflow-rg --yes
+```
