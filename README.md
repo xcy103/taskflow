@@ -5,6 +5,12 @@
 A small full-stack **Kanban board** (MERN). A practice project built to demonstrate:
 MERN stack · JWT auth · testing · Docker · CI/CD · Azure.
 
+**🌐 Live demo:** https://mango-mud-0d7386d0f.7.azurestaticapps.net
+
+> Deployed on Azure — React on **Static Web Apps**, the API on **Container Apps**,
+> data in **Cosmos DB for MongoDB**. The API scales to zero, so the first request
+> after it's been idle takes a few seconds to warm up.
+
 > Status: **Phase 0 — foundation.** See [ROADMAP.md](ROADMAP.md) for the plan and
 > [CLAUDE.md](CLAUDE.md) for scope & conventions.
 
